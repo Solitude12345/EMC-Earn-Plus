@@ -1,0 +1,98 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@font-face {
+  font-family: "baseFont";
+  src: url("@/assets/font/Urbanist Medium.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "baseFontBold";
+  src: url("@/assets/font/Urbanist-Bold.ttf") format("truetype");
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  border-color: currentcolor;
+  border-style: solid;
+  border-width: 0;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+html {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  font-family: "baseFont";
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+  background: transparent;
+}
+
+.emc-font-bold {
+  font-family: "baseFontBold";
+}
+
+.emc-button:hover {
+  background-color: #5d00ba !important;
+  border-color: #5d00ba !important;
+}
+
+.el-button.is-disabled,
+.el-button.is-disabled:hover {
+  background-color: rgba(142, 29, 255, 0.5) !important;
+  border-color: rgba(142, 29, 255, 0.5) !important;
+  border: 0;
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.log-info {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.log-error {
+  color: #f04455;
+}
+
+.log-warning {
+  color: #faa018;
+}
+
+.log-success {
+  color: #04c282;
+}
+
+.gradient-border-button {
+  padding: 10px 20px;
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  background-image: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0.1)
+    ),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  display: inline-block;
+}
