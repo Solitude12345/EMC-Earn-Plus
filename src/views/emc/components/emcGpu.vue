@@ -260,7 +260,9 @@ const greet = async () => {
 			isLoading.value = false;
 			startTimer()
 			addLog('info', 'Started successfully, start the task...');
-			beginNewTask(containerName, modelName);
+			for (let i = 0; i < 20; i++) {
+				beginNewTask(containerName + i, modelName);
+			}
 		} else {
 			isLoading.value = false;
 			stopWorker()
@@ -331,52 +333,45 @@ const checkWorker = async (gpu: any, containerName: string) => {
 
 const beginNewTask = async (containerName: string, modelName: string) => {
 
-	for (let i = 0; i < 3; i++) {
-		new Promise(async (resolve) => {
 
-			const isImageExists = await window.dockerAPI.checkImageExists(userStore.contractSetting.docker_name);
-			if (!isImageExists) {
-				stopWorker();
-				return
-			}
+	const isImageExists = await window.dockerAPI.checkImageExists(userStore.contractSetting.docker_name);
+	if (!isImageExists) {
+		stopWorker();
+		return
+	}
 
-			try {
-				const account = await privateKeyToAccount(accountStore.getPrivate(), { nonceManager: viem.nonceManager });
-				const walletClient = viem.createWalletClient({
-					account,
-					chain: testnet,
-					transport: http()
-				});
-				const ImageReward = viem.getContract({
-					abi: ImageRewardContract.abi, address: userStore.contractSetting.img_reward,
-					client: { public: publicClient, wallet: walletClient }
-				})
-
-				const seed = (await ImageReward.read.seed()) as bigint;
-				const prompt = await ImageReward.read.prompt() as string;
-				const intervalSalt = await ImageReward.read.intervalSalt() as bigint;
-				console.log({ seed, prompt, intervalSalt });
-				if (await window.dockerAPI.checkTask(intervalSalt.toString())) {
-					addLog('info', `intervalSalt: ${intervalSalt}`)
-				} else {
-					let maxUserClaimsPerInterval = await ImageReward.read.maxUserClaimsPerInterval();
-					let userClaimed = await ImageReward.read.userClaimed([account.address, intervalSalt]);
-					if (userClaimed >= maxUserClaimsPerInterval) {
-						beginNewTask(containerName, modelName);
-						return;
-					}
-				}
-				const result = await window.dockerAPI.newTask(seed.toString(), prompt, intervalSalt.toString(), account.address, containerName + i, modelName, userStore.contractSetting.img_reward, userStore.contractSetting.docker_name);
-				await claimReward(containerName, modelName, result);
-				resolve(true)
-			} catch (error: any) {
-				console.log(`miner error, ${error.message}`);
-				// addLog('error', `miner error, ${error.message}`);
-				// stopWorker();
-				resolve(false)
-			}
+	try {
+		const account = await privateKeyToAccount(accountStore.getPrivate(), { nonceManager: viem.nonceManager });
+		const walletClient = viem.createWalletClient({
+			account,
+			chain: testnet,
+			transport: http()
+		});
+		const ImageReward = viem.getContract({
+			abi: ImageRewardContract.abi, address: userStore.contractSetting.img_reward,
+			client: { public: publicClient, wallet: walletClient }
 		})
-		await new Promise((res) => setTimeout(res, 3000));
+
+		const seed = (await ImageReward.read.seed()) as bigint;
+		const prompt = await ImageReward.read.prompt() as string;
+		const intervalSalt = await ImageReward.read.intervalSalt() as bigint;
+		console.log({ seed, prompt, intervalSalt });
+		if (await window.dockerAPI.checkTask(intervalSalt.toString())) {
+			addLog('info', `intervalSalt: ${intervalSalt}`)
+		} else {
+			let maxUserClaimsPerInterval = await ImageReward.read.maxUserClaimsPerInterval();
+			let userClaimed = await ImageReward.read.userClaimed([account.address, intervalSalt]);
+			if (userClaimed >= maxUserClaimsPerInterval) {
+				beginNewTask(containerName, modelName);
+				return;
+			}
+		}
+		const result = await window.dockerAPI.newTask(seed.toString(), prompt, intervalSalt.toString(), account.address, containerName, modelName, userStore.contractSetting.img_reward, userStore.contractSetting.docker_name);
+		await claimReward(containerName, modelName, result);
+	} catch (error: any) {
+		console.log(`miner error, ${error.message}`);
+		// addLog('error', `miner error, ${error.message}`);
+		// stopWorker();
 	}
 
 
