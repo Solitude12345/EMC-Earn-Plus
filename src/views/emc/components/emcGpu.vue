@@ -43,7 +43,6 @@
 			<emc-input
 				v-model="feePerGas"
 				placeholder="please enter the fee per gas"
-				disabled
 				:notBg="true"
 				customStyle="font-weight:400;"
 			/>
@@ -384,7 +383,7 @@ const beginNewTask = async (containerName: string, modelName: string) => {
 			}
 		}
 		const result = await window.dockerAPI.newTask(seed.toString(), prompt, intervalSalt.toString(), account.address, containerName, modelName, userStore.contractSetting.img_reward, userStore.contractSetting.docker_name);
-		await claimReward(containerName, modelName, result);
+		claimReward(containerName, modelName, result);
 	} catch (error: any) {
 		console.log(`miner error, ${error.message}`);
 		// addLog('error', `miner error, ${error.message}`);
@@ -427,7 +426,7 @@ const claimReward = async (containerName: string, modelName: string, result: str
 		const minFee = await ImageReward.read.fee();
 		const { s1, intervalSalt, gpu_model, duration, s4 } = param;
 		const reffer = viem.isAddress(accountStore.address) ? accountStore.address : viem.zeroAddress;
-		const userNonce = await publicClient.getTransactionCount({ address: userStore.user.address as `0x${string}`, blockTag: "latest" });
+		const userNonce = await publicClient.getTransactionCount({ address: userStore.user.address as `0x${string}`, blockTag: "pending" });
 		environment !== "production" && addLog("warning", `userAddress: ${userStore.user.address}\n minFee: ${minFee}\n userNonce: ${userNonce}`);
 		const txhash = await ImageReward.write.claimReward(
 			[BigInt(s1), BigInt(intervalSalt), gpu_model, BigInt(duration), `0x${s4}`, reffer], {

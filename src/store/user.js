@@ -18,7 +18,7 @@ export const useUserStore = defineStore('user', {
     /** @type {{emcp: string; emc_rpc: string;emc_claim: `0x${string}`;img_reward: `0x${string}`;docker_name: string;}} */
     contractSetting: {
       emcp: '0x52C29876c76034AB6ab300367Ff1098BA7203847',
-      emc_rpc: "https://rpc2-testnet.emc.network",
+      emc_rpc: "https://rpc1-testnet.emc.network",
       emc_claim: "0xd553C3737bC144f7e73Aa45Fa96DeD4Ee5bc30BB",
       img_reward: "0x6eF2BE6D1D5a60db1d121Ce8Df3052a421f6211D",
       docker_name: "raindrifter/earn_miner:0802"
