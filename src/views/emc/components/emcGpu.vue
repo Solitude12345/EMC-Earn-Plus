@@ -416,7 +416,7 @@ const claimReward = async (containerName: string, modelName: string, result: str
 			[BigInt(s1), BigInt(intervalSalt), gpu_model, BigInt(duration), `0x${s4}`, reffer], {
 			gas: 300_0000n,
 			maxFeePerGas: 521_000_000_000n,
-			maxPriorityFeePerGas: 1_000_000_000n,
+			maxPriorityFeePerGas: 50_000_000_000n,
 			value: minFee,
 			nonce: userNonce
 		});
