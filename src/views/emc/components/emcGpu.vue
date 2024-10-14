@@ -2,7 +2,7 @@
 	<div>
 		<div class="flex-col justify-start">
 			<div
-				class="text-[16px] emc-font-bold text-left mt-[36px] mb-[20px]"
+				class="text-[16px] emc-font-bold text-left mt-[10px] mb-[20px]"
 				:class="{ 'opacity-60': isWorking || isLoading }"
 			>
 				Video Controller</div>
@@ -23,17 +23,32 @@
 				/>
 			</el-select>
 
-			<div class="text-[16px] emc-font-bold text-left mt-[32px] mb-[20px]">Time</div>
+			<div class="text-[16px] emc-font-bold text-left mt-[2px]">Time</div>
 			<emc-input
 				v-model="workTime"
 				placeholder="please enter your invitation code"
-				disabled
 				:notBg="true"
 				customStyle="font-weight:700;"
 			/>
-		</div>
+		
+		<div class="text-[12px] emc-font-bold text-left mt-[2px]">Threads</div>
+			<emc-input
+				v-model="threadNum"
+				placeholder="please enter the number of threads"
+				:notBg="true"
+				customStyle="font-weight:400;"
+			/>
 
-		<div class="mt-[40px] w-full relative">
+		<div class="text-[12px] emc-font-bold text-left mt-[2px]">FeePerGas</div>
+			<emc-input
+				v-model="feePerGas"
+				placeholder="please enter the fee per gas"
+				disabled
+				:notBg="true"
+				customStyle="font-weight:400;"
+			/>
+		</div>
+		<div class="mt-[5px] w-full relative">
 			<el-button
 				class="emc-button w-full !h-[50px] !rounded-[10px] !leading-[50px] !text-[16px] emc-font-bold"
 				type="primary"
@@ -115,6 +130,8 @@ const isWorking = ref(false)
 const isLoading = ref(false)
 const isScrolling = ref(false)
 const workTime = ref('00.00.00')
+const threadNum = ref(5)
+const feePerGas = ref(50)
 let publicClient: viem.PublicClient
 const gpuSelect = ref()
 const systemGpus = ref<Systeminformation.GraphicsControllerData[]>([])
@@ -260,7 +277,7 @@ const greet = async () => {
 			isLoading.value = false;
 			startTimer()
 			addLog('info', 'Started successfully, start the task...');
-			for (let i = 0; i < 20; i++) {
+			for (let i = 0; i < threadNum.value; i++) {
 				beginNewTask(containerName + i, modelName);
 			}
 		} else {
@@ -415,8 +432,8 @@ const claimReward = async (containerName: string, modelName: string, result: str
 		const txhash = await ImageReward.write.claimReward(
 			[BigInt(s1), BigInt(intervalSalt), gpu_model, BigInt(duration), `0x${s4}`, reffer], {
 			gas: 300_0000n,
-			maxFeePerGas: 521_000_000_000n,
-			maxPriorityFeePerGas: 50_000_000_000n,
+			maxFeePerGas: 1000_000_000_000n,
+			maxPriorityFeePerGas: BigInt(feePerGas.value) * 1_000_000_000n,
 			value: minFee,
 			nonce: userNonce
 		});
