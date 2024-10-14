@@ -21,7 +21,7 @@ export const useUserStore = defineStore('user', {
       emc_rpc: "https://rpc1-testnet.emc.network",
       emc_claim: "0xd553C3737bC144f7e73Aa45Fa96DeD4Ee5bc30BB",
       img_reward: "0x6eF2BE6D1D5a60db1d121Ce8Df3052a421f6211D",
-      docker_name: "raindrifter/earn_miner:0802"
+      docker_name: "raindrifter/earn_miner:0910"
     },
   }),
   actions: {
@@ -39,10 +39,13 @@ export const useUserStore = defineStore('user', {
      * @param {string} address
      * @param {viem.Hash} privatekey
      */
-    login(address, privatekey) {
+    login(address, privatekey, rpc  ) {
       this.user.address = address;
       this.user.private = privatekey;
       this.user.loggedIn = true;
+    },
+    setRpc(rpc) {
+      this.contractSetting.emc_rpc = rpc;
     },
     logout() {
       this.clearUser();

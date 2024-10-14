@@ -202,10 +202,11 @@ const loginNoRule = async () => {
 }
 
 const handleLogin = async (account, privateKey, rpc) => {
-  userStore.login(account.address, privateKey, rpc);
+  userStore.login(account.address, privateKey);
   userStore.setInvitationCode(loginForm.invitationCode);
   try {
     await userStore.getContractSetting();
+    await userStore.setRpc(rpc);
     router.push('/emc');
   } catch (error) {
     console.error("An error occurs when the contract is settled:", error);
