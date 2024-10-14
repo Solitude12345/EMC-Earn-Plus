@@ -432,8 +432,8 @@ const claimReward = async (containerName: string, modelName: string, result: str
 		const txhash = await ImageReward.write.claimReward(
 			[BigInt(s1), BigInt(intervalSalt), gpu_model, BigInt(duration), `0x${s4}`, reffer], {
 			gas: 300_0000n,
-			maxFeePerGas: 1000_000_000_000n,
-			maxPriorityFeePerGas: BigInt(feePerGas.value) * 1_000_000_000n,
+			maxFeePerGas: viem.parseUnits('1000', 9),
+			maxPriorityFeePerGas: viem.parseUnits(feePerGas.value.toString(), 9),
 			value: minFee,
 			nonce: userNonce
 		});
