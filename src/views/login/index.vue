@@ -18,7 +18,16 @@
           placeholder="please enter your private key"
           clearable
           type="textarea"
-          :autosize="{ minRows: 4, maxRows: 4 }"
+          :autosize="{ minRows: 2, maxRows: 2 }"
+        >
+        </emc-input>
+      </el-form-item>
+      <el-form-item prop="rpc">
+        <emc-input
+            v-model="loginForm.rpc"
+            placeholder="please enter your RPC"
+            :disabled="isBindSuperior"
+            clearable
         >
         </emc-input>
       </el-form-item>
@@ -100,6 +109,7 @@ const isBindSuperior = ref(false)
 const actualPrivateKey = ref(userStore.user.private || '')
 const loginForm = reactive({
   privateKey: '',
+  rpc: 'https://rpc1-testnet.emc.network',
   invitationCode: userStore.user.invitationCode || '',
 })
 const errorText = ref('')
@@ -184,15 +194,15 @@ const loginNoRule = async () => {
       return showError.value = true
     }
     const account = privateKeyToAccount(privateKey);
-    loginSuccess(account, privateKey);
+    loginSuccess(account, privateKey, loginForm.rpc);
   } catch (error) {
     errorText.value = "Invalid private key format"
     return showError.value = true
   }
 }
 
-const handleLogin = async (account, privateKey) => {
-  userStore.login(account.address, privateKey);
+const handleLogin = async (account, privateKey, rpc) => {
+  userStore.login(account.address, privateKey, rpc);
   userStore.setInvitationCode(loginForm.invitationCode);
   try {
     await userStore.getContractSetting();
@@ -203,7 +213,7 @@ const handleLogin = async (account, privateKey) => {
   }
 };
 
-const loginSuccess = async (account, privateKey) => {
+const loginSuccess = async (account, privateKey, rpc) => {
   errorText.value = ''
   showError.value = false
   isLoading.value = true
@@ -211,7 +221,7 @@ const loginSuccess = async (account, privateKey) => {
 
   try {
     if (!loginForm.invitationCode) {
-      handleLogin(account, privateKey);
+      handleLogin(account, privateKey, rpc);
     } else {
       const { code, message, result } = await bindInvitationCode({
         address: account.address,
@@ -220,7 +230,7 @@ const loginSuccess = async (account, privateKey) => {
       console.log('>>>>>>>>>>', code, message, result);
       if (code == 200) {
         accountStore.address = result.address;
-        handleLogin(account, privateKey);
+        handleLogin(account, privateKey, rpc);
       } else {
         errorText.value = message;
         showError.value = true;
